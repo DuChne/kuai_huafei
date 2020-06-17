@@ -1,0 +1,37 @@
+<script>
+/**
+* 应用级别的配置，供所有页面公用
+*/
+import util from './util'
+import './appStatistics.min.js'
+import push from '@service.push'
+import storage from '@system.storage'
+
+export default {
+  showMenu: util.showMenu,
+  onCreate: function () {
+    APP_STATISTICS.app_sta_init(this);
+    var that = this;
+    push.subscribe({
+      success: function (data) {
+        let regId = data.regId
+        storage.set({
+          key: 'regId',
+          value: regId
+        })
+      },
+      fail: function (data, code) {
+        console.log(
+          `push.subscribe failed, result data = ${JSON.stringify(
+            data
+          )}, code = ${code}`
+        )
+      },
+      complete: function () {
+        console.log('push.subscribe completed')
+      }
+    })
+  },
+  createShortcut: util.createShortcut
+}
+</script>

@@ -1,0 +1,1116 @@
+<template>
+    <!-- template里只能有一个根节点 --> 
+    <div class="demo-page">
+        <div class="topImg" if="{{loging}}">
+            <div class="topImg" style="width:750px;" if="{{!isWeb}}">
+                <tabs class="tabs" onchange="changeTabactive" index="0">
+                    <tab-content class="tab-content flex" scrollable="{{scrollable}}">
+                        <!--基础组件-->
+                        <div class="item-container flex">
+                            <div class="tab-content" style="margin-top:10px;"><input type="number " placeholder="请输入手机号" style="font-size:60px;padding-left:20px;" onchange="shoFun"></input></div>
+                            <div class="tab-content" style="padding-left:24px;margin-top:40px"><text style="font-size:30px;color:#33333;">充值话费</text></div>
+                            <div class="tab-content flex" style="padding:24px;">
+                                <div class="diva flex {{xIndex==$item.id?'xuaz':'diva'}}" @click="dian($item.id)" for="{{listArr}}" style="margin-right:{{$item.id%3 == '0'?'20px':'36px'}};position: relative;">
+                                    <div style="width:200px;" class="flex_ju"><text style="color:{{xIndex==$item.id?'#1D97FD':'#000000'}};font-size:30px;">{{$item.call_price}}元 </text></div>
+                                    <div style="width:200px;" class="flex_ju"><text style="color:{{xIndex==$item.id?'#1D97FD':'#999999'}};font-size:26px;">仅售￥{{$item.money_price}}元</text></div>
+
+                                    <!-- <div class="xImg">
+                                        <image style="width:40px;" src="https://file.scymob.com/gox.png" if="{{xIndex==$item.id}}"></image>
+                                    </div> -->
+
+                                </div>
+                            </div>
+
+                            <div class="cDiv" @click="cFun">
+                                <text style="color:#ffffff;font-size:30px">立即充值</text>
+                            </div>
+                            <div class="cDiv" @click="useWxpay()">
+                                <text style="color:#ffffff;font-size:30px">支付</text>
+                            </div>
+                            <div class="cDiv" @click="useWxpay('referer')">
+                                <text style="color:#ffffff;font-size:30px">支付</text>
+                            </div>
+                        </div>
+                        <!--表单组件-->
+                        <div class="item-container flex">
+                            <div class="ding flex">
+                                <div class="flex_sb tab-content" style="margin-bottom:20px;">
+                                    <input type="number" class="dDiv" onchange="chaFun" placeholder="请输入手机号码"></input>
+                                    <div class="but" @click="formSubmit"><text style="color: #ffffff;font-size: 22px;">立即查询</text></div>
+                                </div>
+
+                                <div class="phone" for="{{phoneArr}}" if="{{phoneArr}}">
+                                    <div class="new_tex flex_sb space_between botton" style="width:750px;">
+                                        <div class="flex"><text class="new_texb">13751324427</text><text class="new_tex color_o" style="padding-top:4px;">话费充值-30元</text></div>
+                                        <text class="new_tex color_w" style="padding-top:4px;" if="{{$item.pay_status == 0}}">未充值</text>
+                                        <text class="new_tex color_o" style="padding-top:4px;" elif="{{$item.order_status == 0 || $item.order_status == 1 || $item.order_status == 2 && $item.pay_status == 1}}">充值到账中</text>
+                                        <text class="new_tex color_o" style="padding-top:4px;" elif="{{$item.order_status == 3 && $item.pay_status == 1}}">充值成功</text>
+                                        <text class="new_tex color_t" style="padding-top:4px;" elif="{{$item.order_status == 4 && $item.pay_status == 1}}">充值失败</text>
+                                    </div>
+                                    <div class="new_tex flex_sb space_between botton" style="width:750px;margin-top:20px;">
+                                        <div class="flex">
+                                            <text style="margin-right:28px;" class="new_tex">支付：</text><text class="color_o new_tex">30元</text>
+                                        </div>
+                                        <text class="color_o new_texa" @click="kefu" if="{{kfphone}}">联系客服</text>
+                                    </div>
+                                </div>
+                                <div style="display:flex;justify-content:center;align-items:center;width:698px;margin-toP;200px;"><text style="font-size:40px;color:#999999">暂无订单~</text></div>
+                            </div>
+                        </div>
+                    </tab-content>
+                    <tab-bar class="tab-bar" style="border-top:1px solid #ebebeb">
+                        <div style="width:305px;display: flex;flex-wrap: wrap;justify-content: center;align-items: center;">
+                            <image src="{{newIndex==0?'../Common/sho1.png':'../Common/sho.png'}}" style="width:60px;height:60px;"></image>
+                            <div style="width:305px;display: flex;justify-content: center;"><text class="tab-text" style="color:{{newIndex==0?'#1D97FD':'#BFBFBF'}}">首页</text></div>
+                        </div>
+                        <div style="width:305px;display: flex;flex-wrap: wrap;justify-content: center;align-items: center;">
+                            <image src="{{newIndex==1?'../Common/biao1.png':'../Common/biao.png'}}" style="width:60px;height:60px;"></image>
+                            <div style="width:305px;display: flex;justify-content: center;"><text class="tab-text" style="color:{{newIndex==1?'#1D97FD':'#BFBFBF'}}">分类</text></div>
+                        </div>
+                    </tab-bar>
+                </tabs>
+            </div>
+        </div>
+        <web class="web-comp" src="{{webh5}}" if="{{isWeb}}" allowthirdpartycookies="{{allow}}" id="web"></web>
+
+        <!-- 加载中 -->
+        <div class="maska" style="position: fixed;top:0px;left:0px;right:0px;bottom:0px;background-color:#000000;display: flex;justify-content: center;align-items: center" if="{{!loging}}">
+            <image src="https://file.scymob.com/timg.gif" alt="" style="width:750px;"></image>
+        </div>
+
+        <!-- 浮标 -->
+        <!-- if="{{c_box}}" -->
+        <div class="imgFixa" ontouchstart="menuTouchStart1($idx)" ontouchmove="menuTouchMove1($idx)" ontouchend="menuTouchEnd1($idx)" style='left:{{moveDiv.adver[$idx].left}}px;top:{{moveDiv.adver[$idx].top}}px' for="{{c_box}}" @click="jwelfare($item.action,'c_box')" if="{{c_box && show_native}}">
+            <image src="{{$item.icon}}" if="{{$item.show}}" style="width:{{$item.pos.w}};"></image>
+        </div>
+
+        <!-- 盒子 -->
+        <div class="imgFixa" ontouchstart="menuTouchStart" ontouchmove="menuTouchMove" ontouchend="menuTouchEnd" style='left:{{moveDiv.menuStyle.left}}px;top:{{moveDiv.menuStyle.top?moveDiv.menuStyle.top:""}}px;bottom:{{moveDiv.menuStyle.top?"":adInfo.icon.pos.b}}' if="{{adInfo.icon.show && show_native}}" @click="jingxb">
+            <image src="{{adInfo.icon.url}}" if="{{adInfo.icon.show}}" style="width:120px;"></image>
+        </div>
+
+        <!-- Banner -->
+        <!-- if="{{b_box}}" -->
+        <div style='background-color: rgba(0,0,0,.1);position: fixed;display: flex;justify-content: flex-end;flex-wrap: wrap;right:{{b_boxAd.right != "false"?b_boxAd.right:""}};top:{{b_boxAd.top != "false"?b_boxAd.top:""}};bottom:{{b_boxAd.bottom != "false"?b_boxAd.bottom:""}};left:{{b_boxAd.left != "false"?b_boxAd.left:""}};' if="{{diBool && show_native}}">
+            <div style='display: flex;justify-content: flex-end;flex-wrap: wrap;width:{{b_boxAd.w}};height:{{b_boxAd.h}};' if="{{b_box && b_box.show}}">
+                <div class="imgFix" @click="jwelfare(b_boxImg[0].action,'b_box')" style="width:{{b_boxAd.w}};height:{{b_boxAd.h}};" if="{{b_box && b_box.show}}">
+                    <image src="{{b_boxImg[0].image}}" style="width:{{b_boxAd.w}};height:{{b_boxAd.h}};" if="{{b_boxImg[0].image}}"></image>
+                </div>
+                <image src="{{b_box.close_img}}" style='position: absolute;top:0px;right: 0px;width:50px;height:50px;' @click="diFun"></image>
+            </div>
+        </div>
+
+        <!-- 插屏 -->
+        <!-- if="{{a_box}}" -->
+        <div class="mask newBanner" if="{{banBool && show_native}}">
+            <div class="imgFix" style='width:{{quewidth}};' @click="jwelfare(a_boxImg[0].action,'a_box')" if="{{a_box && a_box.show}}">
+                <image src="{{a_boxImg[0].image}}" id="newImg" if="{{a_box.show}}" style="width:{{quewidth}};"></image>
+            </div>
+            <image src="{{a_box.close_img}}" style='width:50px;height:50px;position: absolute;top:{{a_boxAd.top != "false"?a_boxAd.top:""}};right:40px;margin-top:-80px;' @click="banFun"></image>
+        </div>
+
+        <!-- 展开盒子 -->
+        <div class="mask" if="{{jBool && show_native}}" style="display: flex;flex-wrap: wrap;">
+            <div style="width: 695px;height:54px;justify-content: flex-end;margin:auto;margin-top: 56px;">
+                <image src="https://file.scymob.com/bih.png" style="width:42px;height:42px;margin-right:2px;" @click="jingxa(adInfo.adicon_close.click_style,adInfo.adicon_close.url,'-1')"></image>
+            </div>
+            <div class="jingC" style="position: relative;">
+                <swiper class="swiper" autoplay="{{autoPlay}}" interval="{{sliderValue}}" indicator="{{indicator}}" duration="{{durationValue}}" vertical="{{isVertical}}" loop="{{loopPlay}}">
+                    <div class="nDiv1" @click="jingxa($item.click_style,$item.url,$idx)" for="{{adInfo.newtop_ad.list}}">
+                        <image src="{{$item.image}}" style="width:750px;height:180px;"></image>
+                    </div>
+                </swiper>
+                <!-- <div class="nDiv1" @click="jingxa">
+	                            <image src="{{adInfo.top_ad.image}}" style="width:750px;height:180px;"></image>
+	                        </div> -->
+                <list class="nDiv2" flex-direction="column" style="padding-bottom:80px;" columns="3" if="{{adInfo.icon.click_style == 0}}">
+                    <list-item class="nDiv3" for="{{adInfo.list}}" tid="uniqueId" @click="jwelfare($item.action,'d_box')">
+                        <!-- <div style="width:132px;height:132px;border-radius:32px;"> -->
+                        <image src="{{$item.icon}}" style="width:130px;height:130px;border-radius:18px;border:1px solid #D2D2D2;"></image>
+                        <!-- </div> -->
+                        <div style="width:150px; display: flex;justify-content: center;margin-top:5px"><text style="font-size:26px;color:#333333">{{$item.name}}</text></div>
+                        <div style="width:150px;display: flex;justify-content: center;margin-top:3px"><text style="font-size:20px;color:#A8A8A8">{{$item.title}}</text></div>
+                        <div style="width:95px;height:50px;background:linear-gradient(90deg,rgba(94,175,254,1),rgba(7,138,255,1));margin-top:18px;margin-bottom:18px;display: flex;justify-content: center;align-items: center;border-radius:5px;
+		"><text style="color:#ffffff;font-size:24px">查看</text></div>
+                    </list-item>
+
+                </list>
+                <list class="nDiv2" style="padding-bottom:80px" flex-direction="row " columns="1" if="{{adInfo.icon.click_style == 1}}">
+                    <list-item class="nDiv4" tid="uniqueId" style="padding-top:0px;padding-bottom:22px" for="{{adInfo.list}}" tid="uniqueId" @click="jwelfare($item.action,'d_box')">
+                        <image src="{{$item.icon}}" style="width:110px;height:110px;border-radius:18px;border:1px solid #D2D2D2;"></image>
+                        <div style="width:540px;height:100px;display:flex;flex-wrap:wrap;position: relative;">
+                            <div style="width:440px;height:40px;margin-top:10px;padding-left:26px;">
+                                <text style="font-size:32px;color:#333333;">{{$item.name}}</text>
+                            </div>
+                            <div style="width:440px;height:40px;margin-top:5px;padding-left:26px;">
+                                <text style="font-size:24px;color:#A8A8A8;">{{$item.title}}</text>
+                            </div>
+                            <div style="width:95px;height:50px;background:linear-gradient(90deg,rgba(94,175,254,1),rgba(7,138,255,1));margin-top:18px;margin-bottom:18px;display: flex;justify-content: center;align-items: center;border-radius:5px;
+		position: absolute;top:18px;right:26px"><text style="color:#ffffff;font-size:24px;">查看</text></div>
+                        </div>
+                    </list-item>
+                </list>
+            </div>
+
+        </div>
+
+    </div>
+</template>
+
+<script>
+    import router from '@system.router'
+    import fetch from '@system.fetch'
+    import allAreaNews from "../Common/areaInfo.js";
+    import prompt from '@system.prompt'
+    import device from '@system.device'
+    import publicData from "../Common/publicData.js"; //公共数据
+    import plus from "../Common/means.js"; //公共数据
+    import storage from '@system.storage'
+    import shortcut from '@system.shortcut'
+    import wxpay from '@service.wxpay'
+
+
+    import webview from '@system.webview'
+    export default {
+        private: {
+            cphone: '',
+            dphone: '',
+            kfphone: '',
+            phoneArr: [],
+            listArr: [],
+            xIndex: 0,
+            isWeb: false,
+            plus: plus,
+            loging: false,
+            show_native: true,
+            regId: "",
+            jBool: false,
+            adInfo: {
+                icon: {
+                    "show": false,
+                    "url": "",
+                    "click_style": 1,
+                    "pos": {
+                        "r": 0,
+                        "b": 200
+                    }
+                }
+            },
+            newIndex: 0,
+            addInfo: {
+                show_H5: '',
+                show_native: '',
+            },
+            a_boxImg: {}, //插屏
+            a_boxAd: {}, //插屏
+            a_box: {
+                show: '',
+                ad: [],
+                close_img: ''
+            }, //插屏
+            b_box: {
+                show: '',
+                ad: [],
+                close_img: ''
+            }, //Banner
+            c_box: [], //浮标
+            banBool: false,
+            b_boxImg: {}, //banner
+            b_boxImga: '', //banner
+            b_boxAd: {
+                h: ''
+            }, //banner
+            windowWidth: '',
+            quewidth: '',
+            diBool: false,
+            userid: '',
+            dataObj: {
+                "userId": '',
+                "userInfo": {
+                    "advertisingId": '',
+                    "userId": '',
+                    "serial": '',
+                    "oaid": '',
+                },
+                "deviceInfo": ''
+            },
+            brand: '',
+
+            callPhone: '',
+            autoPlay: true,
+            indicator: false,
+            loopPlay: true,
+            sliderValue: 4000,
+            durationValue: 1000,
+            isVertical: false,
+            //最新添拖动
+            moveDiv: {
+                menuStyle: {
+                    left: 20,
+                    top: 20,
+                    disX: 0,
+                    disY: 0,
+                    beginDrag: false
+                },
+                adver: [{
+                    left: 0,
+                    top: 0,
+                    disX: 0,
+                    disY: 0,
+                    beginDrag: false
+                }]
+
+            }
+        },
+        onShow() {
+            this.getList()
+            APP_STATISTICS.page_show(this); //在onShow方法的第一行加入此代码
+            //App业务代码
+            var that = this;
+            storage.get({
+                key: 'dataObj',
+                success: function(data) {
+                    if (!data) {
+                        that.gongFun()
+                    }
+                }
+            })
+
+            storage.get({
+                key: 'userid',
+                success: function(data) {
+                    if (!data) {
+                        that.userid = data ? JSON.parse(data) : ''
+                    }
+                }
+            })
+
+            storage.get({
+                key: 'regId',
+                success: function(data) {
+                    that.regId = data
+                }
+            })
+            storage.get({
+                key: 'arr',
+                success: function(data) {
+                    that.arr = data ? JSON.parse(data) : []
+                }
+            })
+
+            storage.get({
+                key: 'lang',
+                success: function(data) {
+                    that.wem = data
+                    if (data) {
+                        that.obj = JSON.parse(data)
+                    }
+                    storage.get({
+                        key: 'isbool',
+                        success: function(data) {
+                            that.isBool = data
+
+                        }
+                    })
+                },
+                fail: function(data, code) {
+                    console.log(`handling fail, code = ${code}`)
+                }
+            })
+        },
+
+
+        parseBrand(brand) {
+            if (brand == 'redmi' || brand == 'xiaomi' || brand == 'blackshark') {
+                return 'xiaomi'
+            } else if (brand == 'huawei' || brand == 'honnor') {
+                return 'huawei'
+            } else if (brand == 'oppo') {
+                return 'oppo'
+            } else if (brand == 'vivo') {
+                return 'vivo'
+            } else {
+                return '其他'
+            }
+        },
+        onInit() {
+            this.getChannelIsH();
+            this.gongFun()
+
+        },
+        onHide() {
+            APP_STATISTICS.page_hide(this); //在onHide方法的第一行加入此代码
+            //...业务代码
+        },
+        tiaoCard() {
+            router.push({
+                uri: '/CardDemo'
+                    // params: { id: this.carHao }
+            })
+
+        },
+        //轻粒子统计
+        jwelfare(action, click) {
+            if (click == 'a_box') {
+                APP_STATISTICS && APP_STATISTICS.track_event('点击插屏');
+                APP_STATISTICS && action.id && APP_STATISTICS.track_event('点击插屏', '点击插屏_' + action.id);
+
+                APP_STATISTICS && APP_STATISTICS.track_event('点击插屏_' + this.brand);
+                APP_STATISTICS && action.id && APP_STATISTICS.track_event('点击插屏_' + this.brand, '点击插屏_' + action.id);
+
+            } else if (click == 'b_box') {
+                APP_STATISTICS && APP_STATISTICS.track_event('点击banner');
+                APP_STATISTICS && action.id && APP_STATISTICS.track_event('点击banner', '点击banner_' + action.id);
+
+                APP_STATISTICS && APP_STATISTICS.track_event('点击banner_' + this.brand);
+                APP_STATISTICS && action.id && APP_STATISTICS.track_event('点击banner_' + this.brand, '点击banner_' + action.id);
+            } else if (click == 'c_box') {
+                APP_STATISTICS && APP_STATISTICS.track_event('点击浮标');
+                APP_STATISTICS && action.id && APP_STATISTICS.track_event('点击浮标', '点击浮标_' + action.id);
+
+                APP_STATISTICS && APP_STATISTICS.track_event('点击浮标_' + this.brand);
+                APP_STATISTICS && action.id && APP_STATISTICS.track_event('点击浮标_' + this.brand, '点击浮标_' + action.id);
+
+            } else if (click == 'd_box') {
+                APP_STATISTICS.track_event('流量包_' + action.id, {
+                    "流量包_": action.id,
+                });
+
+                APP_STATISTICS && APP_STATISTICS.track_event('点击盒子_' + this.brand);
+                APP_STATISTICS && action.id && APP_STATISTICS.track_event('点击盒子_' + this.brand, '点击盒子_' + action.id);
+            }
+            plus.welfarea(action.click_type, action.url, action.click_url ? action.click_url : '')
+        },
+
+
+        banFun() {
+            this.banBool = !this.banBool
+        },
+
+        jingxa(data, url, id) {
+            this.jBool = !this.jBool
+            if (data == 1) {
+                if (id != '-1') {
+                    APP_STATISTICS && APP_STATISTICS.track_event('点击盒子banner');
+                    APP_STATISTICS && APP_STATISTICS.track_event('点击盒子banner', '点击盒子_' + id);
+                    plus.welfarea(data, url ? url : '')
+                } else {
+                    APP_STATISTICS && APP_STATISTICS.track_event('点击盒子关闭');
+                    APP_STATISTICS && APP_STATISTICS.track_event('点击盒子关闭', '点击盒子_' + id);
+                    plus.welfarea(data, url ? url : '')
+                }
+            }
+        },
+        jingxb(data, url, id) {
+            APP_STATISTICS && APP_STATISTICS.track_event('点击盒子');
+            this.jBool = !this.jBool
+        },
+        changeTabactive(e) {
+            // 切换tab
+            this.newIndex = e.index;
+            console.info('切换tab: ' + e.index)
+        },
+
+
+        // plus.promptFun(url)npm 
+        //是否H5
+        getChannelIsH() {
+            var that = this;
+            storage.get({
+                key: 'userid',
+                success: function(data) {
+                    that.userid = data;
+                    plus.getInfoa('getInfo').then(res => {
+                        that.brand = that.parseBrand(res.brand.toLowerCase());
+                        let url = publicData.getTabConfig + '&brand=' + res.brand + '&userId=' + that.userid + '&pkgName=' + that.packageName + '&os=' + res.osType
+                        plus.requiref(url, {}, 'POST').then(data => {
+                            if (JSON.parse(data.data).code == 0) {
+                                let resdata = JSON.parse(data.data);
+                                if (that.userid == '') {
+                                    storage.set({
+                                        key: 'userid',
+                                        value: resdata.data.userId
+                                    })
+                                    that.userid = resdata.data.userId;
+                                }
+
+                                that.gongFun()
+
+                                // 如果是H5 
+                                var callGetAds = resdata.data.callGetAds
+                                let time = setTimeout(() => {
+                                    if (callGetAds) {
+                                        that.getAppdasinfo()
+                                    }
+                                    that.PostDeviceInfo()
+                                    that.PostPullInfoID()
+                                    that.loging = true
+                                }, 800)
+                                if (resdata.data.docking_type == 3) {
+                                    that.webh5 = resdata.data.h5;
+                                    that.isWeb = true;
+                                }
+                            }
+                        })
+                    })
+                }
+            })
+        },
+
+
+        //获取广告
+        getAppdasinfo() {
+            const that = this;
+            plus.getInfoa('getInfo').then(res => {
+                let url = publicData.getAppdasinfo + '&brand=' + res.brand + '&userId=' + that.userid + '&pkgName=' + that.packageName + '&os=' + res.osType
+                that.windowWidth = res.windowWidth;
+                that.windowHeight = res.windowHeight;
+
+                //获取广告
+                plus.requiref(url, {}, 'POST').then(data => {
+                    let resdata = JSON.parse(data.data);
+                    // that.a=JSON.stringify(resdata)
+                    if (resdata.data && resdata.data.adInfo) {
+                        that.adInfo = resdata.data.adInfo
+                        that.moveDiv.menuStyle.left = 750 - 120;
+                        that.moveDiv.menuStyle.top = "";
+
+                        that.addInfo = that.adInfo.ad
+                        that.a_box = that.adInfo.ad.data.a_box;
+                        that.b_box = that.adInfo.ad.data.b_box;
+                        that.a_boxImg = that.adInfo.ad.data.a_box.ad;
+                        that.a_boxAd = that.adInfo.ad.data.a_box.pos;
+                        let width = that.adInfo.ad.data.a_box.pos.w;
+                        that.quewidth = width;
+                        that.banBool = that.a_box.show;
+                        that.b_boxImg = that.adInfo.ad.data.b_box.ad;
+                        that.b_boxAd = that.adInfo.ad.data.b_box.pos;
+                        that.diBool = that.adInfo.ad.data.b_box.show
+                        that.c_box = that.adInfo.ad.data.c_box;
+                        //最新添拖动
+                        that.moveDiv.adver = [];
+                        let newmoveDiv = that.moveDiv.adver;
+                        for (let i in that.c_box) {
+                            if (that.c_box[i].pos.left == "false") {
+                                if (that.c_box[i].pos.right.replace(/px/g, "") == 0) {
+                                    that.c_box[i].pos.left = (750 - that.c_box[i].pos.w.replace(/px/g, "")) + 'px'
+                                }
+                            }
+
+                            let obj = {
+                                left: that.c_box[i].pos.left.replace(/px/g, "") >= 500 ? 750 - that.c_box[i].pos.w.replace(/px/g, "") : that.c_box[i].pos.left.replace(/px/g, ""),
+                                top: that.c_box[i].pos.top.replace(/px/g, ""),
+                                disX: 0,
+                                disY: 0,
+                                beginDrag: false
+                            }
+                            that.moveDiv.adver.push(obj)
+                        }
+                        that.show_native = resdata.data.adInfo.ad.show_native
+                    }
+                    if (resdata.data.docking_type == 3) {
+                        that.webh5 = resdata.data.h5;
+                        that.isWeb = true;
+                    }
+                })
+            })
+        },
+
+        //上传设备
+        PostDeviceInfo() {
+            var that = this;
+            storage.get({
+                key: 'dataObj',
+                success: function(data) {
+                    that.dataObj = data ? JSON.parse(data) : that.dataObj;
+                    plus.getInfoa('getInfo').then(res => {
+                        let url = publicData.PostDeviceInfo + '&brand=' + res.brand + '&userId=' + that.userid + '&pkgName=' + that.packageName + '&os=' + res.osType
+                        plus.requiref(url, that.dataObj, 'POST').then(data => {})
+                    })
+                }
+            })
+        },
+
+        //上传推送id
+        PostPullInfoID() {
+            var that = this;
+            plus.getInfoa('getInfo').then(res => {
+                let url = publicData.PostPullInfoID + '&brand=' + res.brand + '&userId=' + that.userid + '&pkgName=' + that.packageName + '&os=' + res.osType + '&regId=' + that.regId
+                plus.requiref(url, {}, 'POST').then(data => {})
+            })
+        },
+
+        //获取设备信息
+        gongFun() {
+            var that = this;
+            that.dataObj.userId = that.userid ? that.userid : '';
+            plus.getInfoa('getInfo').then(res => {
+                    that.dataObj.deviceInfo = res;
+                    storage.set({
+                        key: 'dataObj',
+                        value: that.dataObj
+                    })
+                }) //获取设备
+            plus.getInfoa('getUserId').then(res => {
+                    that.dataObj.userInfo.userId = res;
+                    storage.set({
+                        key: 'dataObj',
+                        value: that.dataObj
+                    })
+                }) //获取设备唯一id
+            plus.getInfoa('getAdvertisingId').then(res => {
+                    that.dataObj.userInfo.advertisingId = res;
+                    storage.set({
+                        key: 'dataObj',
+                        value: that.dataObj
+                    })
+                })
+                //获取设备序列号
+            plus.getInfoa('getOAID').then(res => {
+                    that.dataObj.userInfo.oaid = res;
+                    storage.set({
+                        key: 'dataObj',
+                        value: that.dataObj
+                    })
+                }) //返回厂商设备标识符中的OAID（匿名设备标识符）
+        },
+        shoFun(e) {
+            if (e.value) {
+                this.cphone = e.value
+            }
+        },
+        chaFun(e) {
+            console.log(e)
+            if (e.value) {
+                this.dphone = e.value
+            }
+        },
+        diFun() {
+            this.diBool = !this.diBool;
+        },
+
+        //最新添拖动
+        menuTouchStart(event) {
+            this.moveDiv.beginDrag = true;
+            this.moveDiv.menuStyle.disX = event.touches[0].offsetX;
+            this.moveDiv.menuStyle.disY = event.touches[0].offsetY;
+        },
+        menuTouchMove(event) {
+            if (this.moveDiv.beginDrag) {
+                event.stopPropagation()
+                let resetDeviceScreenWidth = event.touches[0].clientX > device.windowWidth ? ((device.windowWidth / device.screenDensity) * 3) : device.windowWidth;
+                let resetDeviceScreenHeight = event.touches[0].clientY > device.windowHeight ? ((device.windowHeight / device.screenDensity) * 3) : device.windowHeight;
+                let menuStyleLeft = event.touches[0].clientX - this.moveDiv.menuStyle.disX;
+                let menuStyleTop = event.touches[0].clientY - this.moveDiv.menuStyle.disY;
+                this.moveDiv.menuStyle.left = menuStyleLeft > 0 ? (menuStyleLeft > (resetDeviceScreenWidth - 204) ? resetDeviceScreenWidth - 204 : menuStyleLeft) : 0;
+                this.moveDiv.menuStyle.top = menuStyleTop > 0 ? (menuStyleTop > (resetDeviceScreenHeight - 204) ? resetDeviceScreenHeight - 204 : menuStyleTop) : 0;
+            }
+        },
+        menuTouchEnd(data) {
+
+            this.moveDiv.beginDrag = false;
+            this.moveDiv.menuStyle.disX = this.moveDiv.menuStyle.disY = 0;
+        },
+
+        // 红包
+        menuTouchStart1(data, event) {
+            this.moveDiv.adver[data].beginDrag = true;
+            this.moveDiv.adver[data].disX = event.touches[0].offsetX;
+            this.moveDiv.adver[data].disY = event.touches[0].offsetY;
+        },
+        menuTouchMove1(data, event) {
+            if (this.moveDiv.adver[data].beginDrag) {
+                event.stopPropagation()
+                let resetDeviceScreenWidth = event.touches[0].clientX > device.windowWidth ? ((device.windowWidth / device.screenDensity) * 3) : device.windowWidth;
+                let resetDeviceScreenHeight = event.touches[0].clientY > device.windowHeight ? ((device.windowHeight / device.screenDensity) * 3) : device.windowHeight;
+                let menuStyleLeft = event.touches[0].clientX - this.moveDiv.adver[data].disX;
+                let menuStyleTop = event.touches[0].clientY - this.moveDiv.adver[data].disY;
+                this.moveDiv.adver[data].left = menuStyleLeft > 0 ? (menuStyleLeft > (resetDeviceScreenWidth - 204) ? resetDeviceScreenWidth - 204 : menuStyleLeft) : 0;
+                this.moveDiv.adver[data].top = menuStyleTop > 0 ? (menuStyleTop > (resetDeviceScreenHeight - 204) ? resetDeviceScreenHeight - 204 : menuStyleTop) : 0;
+            }
+        },
+        menuTouchEnd1(data) {
+            this.moveDiv.adver[data].beginDrag = false;
+            this.moveDiv.adver[data].disX = this.moveDiv.adver[data].disY = 0;
+        },
+        getList() {
+            var that = this;
+            plus.requiref('https://mini.scymob.com/weapp-pddk/qqPay/index', {}, 'GET').then(data => {
+                let resdata = JSON.parse(data.data);
+                if (resdata.code == 0) {
+                    that.listArr = resdata.data
+                    console.log(that.listArr)
+
+                }
+            })
+        },
+        dian(id) {
+            this.xIndex = id
+        },
+        ovrList() {
+            var that = this;
+            plus.requiref('https://mini.scymob.com/weapp-pddk/qqPay/index', {}, 'GET').then(data => {
+                let resdata = JSON.parse(data.data);
+                if (resdata.code == 0) {
+                    that.listArr = resdata.data
+                    console.log(that.listArr)
+
+                }
+            })
+        },
+        formSubmit() {
+            if (this.dphone == '') {
+                prompt.showDialog({
+                    message: '请输入手机号'
+                })
+            } else if (!isPhone(this.dphone)) {
+                prompt.showDialog({
+                    message: '请输入正确的手机号'
+                })
+            }
+
+            var that = this;
+            plus.requiref('https://mini.scymob.com/weapp-pddk/qqPay/orderList', {
+                appid: '',
+                openid: '',
+                phone: that.dphone,
+            }, 'GET').then(data => {
+                let resdata = JSON.parse(data.data);
+                if (resdata.code == 0) {
+                    that.listArr = resdata.data
+                    that.callPhone = resdata.callPhone
+                    router.push({
+                        uri: 'tel:' + resdata.callPhone
+                    })
+                }
+            })
+        },
+        cFun() {
+            if (this.cphone == '') {
+                prompt.showDialog({
+                    message: '请输入手机号'
+                })
+            } else if (!isPhone(this.cphone)) {
+                prompt.showDialog({
+                    message: '请输入正确的手机号'
+                })
+            }
+
+        },
+        useWxpay(type) {
+            const payType = wxpay.getType()
+
+            if (payType == 'APP') {
+                prompt.showToast({
+                    message: '当前可用微信支付方式：原生支付'
+                })
+                fetch.fetch({
+                    url: 'https://www.quickapp.cn/', // 根据实际业务填写正确的地址
+                    success: function(ret) {
+                        const order = JSON.parse(ret.data)
+                        console.info('WXPAY:prepayid:' + order.prepayid)
+                            // console.info('WXPAY:timestamp:' + order.timestamp)
+                            // console.info('WXPAY:noncestr:' + order.noncestr)
+                            // console.info('WXPAY:appid:' + order.appid)
+                        prompt.showToast({
+                            message: 'fetch order success  ' + ret.data
+                        })
+
+                        wxpay.pay({
+                            prepayid: order.prepayid,
+                            //微信原生支付的prepayId
+                            extra: {
+                                app_id: order.appid,
+                                partner_id: order.partnerid,
+                                package_value: order.package,
+                                nonce_str: order.noncestr,
+                                time_stamp: order.timestamp,
+                                order_sign: order.sign
+                            },
+
+                            fail: function(data, code) {
+                                console.info('WXPAY handling fail, code=' + code + ' data:' + JSON.stringify(data))
+
+                                if (code == '900') {
+                                    prompt.showToast({
+                                        message: '支付失败：签名错误'
+                                    })
+                                } else if (code == '901') {
+                                    prompt.showToast({
+                                        message: '支付失败：包名错误'
+                                    })
+                                } else if (code == '1000') {
+                                    prompt.showToast({
+                                        message: '支付失败：未安装微信'
+                                    })
+                                } else if (code == '2001') {
+                                    prompt.showToast({
+                                        message: '支付失败：微信app返回订单错误'
+                                    })
+                                } else {
+                                    prompt.showToast({
+                                        message: '支付失败：' + code
+                                    })
+                                }
+                            },
+                            cancel: function() {
+                                console.info('WXPAY handling cancel')
+                            },
+                            success: function(data) {
+                                console.info('WXPAY handling success' + ' data:' + JSON.stringify(data))
+                                prompt.showToast({
+                                    message: '支付提交微信成功'
+                                })
+                            }
+                        })
+                    }
+                })
+            } else if (payType == 'MWEB') {
+                prompt.showToast({
+                    message: '当前可用微信支付方式：网页支付'
+                })
+
+                let param = {}
+
+                if (type === 'referer') {
+                    param = {
+                        // 微信网页支付的prepayId
+                        prepayid: 'xxxxxxxxxx',
+                        // 微信后台注册的服务器地址
+                        referer: 'http://****',
+                        extra: {
+                            // 支付服务器下单后，微信返回的MWEB_URL
+                            mweb_url: 'http://****'
+                        }
+                    }
+                } else {
+                    prompt.showToast({
+                        message: '22222'
+                    })
+                    param = {
+                        // 微信网页支付的prepayId
+                        prepayid: 'xxxxxxxxxx',
+                        extra: {
+                            // 传递给支付页面的自定义参数, 根据需要进行设置, 需要被urlEncode, 会被拼接在配置的url尾部
+                            customeKey1: 'customeValue1',
+                            customeKey2: 'customeValue2'
+                        }
+                    }
+                }
+
+                const callbackFn = {
+                    fail: function(data, code) {
+                        console.info('H5 WXPAY handling fail, code=' + code + ' data:' + JSON.stringify(data))
+                        if (code == '1000') {
+                            prompt.showToast({
+                                message: '支付失败：未安装微信'
+                            })
+                        } else if (code == '1001') {
+                            prompt.showToast({
+                                message: '支付失败：url not found'
+                            })
+                        } else {
+                            prompt.showToast({
+                                message: '支付失败：' + code
+                            })
+                        }
+                    },
+                    cancel: function() {
+                        console.info('H5 WXPAY handling cancel')
+                    },
+                    success: function(data) {
+                        console.info('H5 WXPAY handling success' + ' data:' + JSON.stringify(data))
+                        prompt.showToast({
+                            message: '支付提交微信成功'
+                        })
+                    }
+                }
+
+                wxpay.pay(Object.assign({}, param, callbackFn))
+            } else {
+                prompt.showToast({
+                    message: '当前无可用微信支付方式'
+                })
+            }
+        }
+
+    }
+
+
+    /**判断手机号 */
+    function isPhone(phone) {
+        let reg = new RegExp('^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\\d{8}$');
+        return reg.test(phone);
+    }
+</script>
+
+<style>
+    .demo-page {
+        flex-direction: column;
+        background-color: #ffffff;
+    }
+    
+    .topImg {
+        width: 750px;
+        display: flex;
+        flex-wrap: wrap;
+    }
+    
+    .newBanner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .imgFixa {
+        position: fixed;
+    }
+    
+    .imgFix {
+        position: absolute;
+    }
+    /* 遮罩层 */
+    
+    .mask {
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 1001;
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+    
+    .maska {
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 1001;
+        background-color: #000000;
+    }
+    
+    .jingC {
+        width: 695px;
+        height: 911px;
+        margin-left: 30px;
+        border-radius: 15px;
+        background-color: #ffffff;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        position: relative;
+    }
+    
+    .nDiv1 {
+        width: 695px;
+        /* height: 62px; */
+        display: flex;
+        align-items: center;
+        font-size: 28px;
+        color: #0184ff;
+        /* margin-top:50px; */
+        justify-content: center;
+        overflow: hidden;
+    }
+    
+    .nDiv2 {
+        width: 695px;
+        height: 784px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        font-size: 28px;
+        color: #0184ff;
+        margin-top: 20px;
+        overflow: hidden;
+        align-items: flex-start;
+    }
+    
+    .nDiv3 {
+        width: 150px;
+        height: 280px;
+        display: flex;
+        flex-wrap: wrap;
+        font-size: 28px;
+        color: #0184ff;
+        margin-top: 20px;
+        justify-content: center;
+        overflow: hidden;
+        margin-right: 30px;
+        margin-left: 30px;
+        padding-left: 20px;
+    }
+    
+    .nDiv4 {
+        width: 695px;
+        height: 140px;
+        display: flex;
+        justify-content: flex-start;
+        font-size: 28px;
+        color: #0184ff;
+        margin-top: 1px;
+        justify-content: center;
+        overflow: hidden;
+        padding-left: 20px;
+    }
+    
+    .swiper {
+        width: 695px;
+        height: 180px;
+    }
+    
+    .tab-bar {
+        background-color: #ffffff;
+    }
+    
+    .tab-text {
+        font-size: 28px;
+    }
+    
+    .flex_column {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+    }
+    
+    .flex {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    
+    .tab-content {
+        width: 750px;
+    }
+    
+    .diva {
+        width: 200px;
+        background-color: rgba(255, 255, 255, 1);
+        border: 2px solid rgba(232, 232, 232, 1);
+        border-radius: 8px;
+        padding: 20px 0;
+        text-align: center;
+        font-size: 26px;
+        color: #999999;
+        margin-right: 36px;
+        margin-bottom: 36px;
+    }
+    
+    .flex_ju {
+        display: flex;
+        justify-content: center;
+    }
+    
+    .xuaz {
+        width: 200px;
+        background-color: rgba(255, 255, 255, 1);
+        border: 2px solid rgba(1, 121, 255, 1);
+        border-radius: 8px;
+        padding: 20px 0;
+        text-align: center;
+        font-size: 26px;
+        color: #1d97fd;
+        margin-right: 36px;
+        margin-bottom: 36px;
+    }
+    
+    .xImg {
+        width: 40px;
+        height: 40px;
+        position: absolute;
+        bottom: 0px;
+        right: 0px;
+        border: 1px solid #000000;
+    }
+    
+    .cDiv {
+        width: 698px;
+        margin-left: 26px;
+        margin-top: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 40px;
+        background-color: rgba(1, 121, 255, 1);
+        height: 80px;
+    }
+    
+    .ding {
+        padding: 24px;
+    }
+    
+    .flex_sb {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .dDiv {
+        width: 100%;
+        height: 70px;
+        border: 2px solid rgba(80, 161, 255, 1);
+        border-radius: 10px;
+        padding-left: 20px;
+        margin-right: 20px;
+        font-size: 22px;
+    }
+    
+    .but {
+        width: 143px;
+        height: 74px;
+        line-height: 74px;
+        background-color: rgba(29, 151, 253, 1);
+        border-radius: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        line-height: 74px;
+        padding: 0px 10px;
+    }
+    
+    .new_texb {
+        font-size: 28px;
+        margin-right: 22px;
+        color: #252525;
+        font-weight: bold;
+    }
+    
+    .new_tex {
+        font-size: 24px;
+    }
+    
+    .new_texa {
+        font-size: 20px;
+    }
+    
+    .color_o {
+        color: #1d97fd;
+    }
+    
+    .color_t {
+        color: #ff5050;
+    }
+    
+    .color_w {
+        color: #999999;
+    }
+    
+    .phone {
+        width: 698px;
+        display: flex;
+        flex-wrap: wrap;
+        border-bottom: 1px solid rgba(229, 229, 229, 1);
+        margin-bottom: 28px;
+        color: #646464;
+        padding-bottom: 30px;
+        padding-top: 20px;
+    }
+    
+    .tabs {
+        width: 750px;
+        position: fixed;
+        top: 0px;
+        bottom: 0px;
+    }
+</style>

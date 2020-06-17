@@ -1,0 +1,78 @@
+
+<template>
+  <!-- template里只能有一个根节点 -->
+  <div class="demo-page">
+    <!-- <web src="{{webH5}}" allowthirdpartycookies="true" ontitlereceive="onTitleReceive"></web> -->
+    <!-- <div><text>{{webH5}}123132132{{action}}</text></div> -->
+  </div>
+</template>
+
+<script>
+  import router from '@system.router'
+import prompt from '@system.prompt'
+import webview from '@system.webview'
+import pkg from '@system.package'
+import plus from "../Common/means.js";//公共数据
+
+
+export default {
+  private: {
+    text: '',
+    webH5:'',
+    action:''
+  },
+  onMenuPress() {
+    this.$app.$def.showMenu()
+  },
+  public: {
+    action: null
+  },
+  onInit() {
+    this.action= JSON.parse(this.$page.query.action);
+
+    plus.welfarea(this.action.click_type,this.action.url)    
+    
+    // this.webH5= (this.action).url;   
+  },
+  onShow() {
+      
+
+  },
+  //  onTitleReceive (e) {
+  //   this.a=JSON.stringify(e.title)
+  //   this.$page.setTitleBar({ text:e.title}) 
+  // },
+
+}
+
+
+
+function GetRequest (h5url) {
+    var theRequest = new Object(),
+        url = h5url;
+    if (url.indexOf("?") != -1) {
+        var str = url.split('?'),
+            strs = str[1].split('&');
+        for (var i = 0; i< strs.length; i++) {
+            var strsAgr = unescape(strs[i].split('=')[1]);
+            if(strsAgr.indexOf("#") != -1) strsAgr = strsAgr.split("#")[0];
+            theRequest[strs[i].split('=')[0]] = strsAgr;
+        }
+    }
+    return theRequest;
+}
+
+</script>
+
+<style>
+  .demo-page {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .title {
+    font-size: 40px;
+    text-align: center;
+  }
+</style>

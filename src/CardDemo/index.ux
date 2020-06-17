@@ -1,0 +1,70 @@
+<template>
+  <!-- template里只能有一个根节点 -->
+  <div class="demo-page" style="padding-bottom:100px;">
+    <div class="gDiv">
+      <image src="https://file.scymob.com/zgyd5g-handletop.png" style="width:750px;"></image>
+      <div style="width:750px;margin-top:50px;" class="flexA box">
+          <text style="font-size:40px;">办理5G特惠卡</text>
+      </div>
+      <div style="width:750px;" class="flexA box">
+          <text style="font-size:40px;">一建买入5G时代</text>
+      </div>
+      <div style="width:750px;position: relative;margin-top:80px;">
+        <image src="https://file.scymob.com/zgyd5g-card.png" style="width:698px;margin-left:26px;"></image>
+        <div style="position: absolute;top: 40px;right: 80px;"><text style="font-size:40px;color:#ffffff">5G特惠流量卡包 5GB</text></div>
+        <div style="position: absolute;top: 120px;right: 80px;"><text style="font-size:28px;color:#ffffff">2G-5G网络通用</text></div>
+        <div style="position: absolute;bottom: 80px;right: 80px;"><text style="font-size:28px;color:#ffffff">30元/月</text></div>
+      </div>
+
+      <div style="width:500px;height:100px;border-radius: 60px;background-color:#258CDE;display: flex;margin-left:125px;margin-top:60px;justify-content: center;align-items: center" @click="tiaoNext">
+        <text style="font-size:30px;color: #ffffff;font-weight: bold;">限时抢购</text>
+      </div>
+
+      <div style="width:660px;padding:30px 40px;border-radius:20px;margin-top:100px;border:1px solid #000000;margin-left:45px;display: flex;justify-content: center;flex-wrap: wrap">
+        <div style="width:660px;justify-content: center;align-items: center"><text style="font-size:24px;">办理说明</text></div>
+        <div style="width:660px;align-items: center;margin-top:10px;"><text style="font-size:24px;">1.包内流量为可在2G-5G网络下使用的通用流量。</text></div>
+        <div style="width:660px;align-items: center;margin-top:10px;"><text style="font-size:24px;">2.订购后立即生效，按月自动续订，变更、退订次月生效。</text></div>
+        <div style="width:660px;align-items: center;margin-top:10px;"><text style="font-size:24px;">3.5G网速需具备5G网络及5G终端。</text></div>
+        <div style="width:660px;align-items: center;margin-top:10px;"><text style="font-size:24px;">4.若5G特惠流量包与您在用套餐存在互斥，将不能成功办理。</text></div>
+      </div>
+
+    </div>
+  </div>
+</template>
+
+<script>
+import router from '@system.router'
+
+export default {
+  private: {
+
+  },
+    tiaoNext(){
+        router.push({
+            uri: '/Next'
+        })
+    }
+}
+</script>
+
+<style>
+.demo-page {
+  flex: 1;
+  flex-direction: column;
+  
+}
+.gDiv {
+  width: 750px;
+  display: flex;
+  flex-wrap: wrap;
+  
+}
+.flexA {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.box {
+  box-sizing: border-box;
+}
+</style>
